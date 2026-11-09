@@ -1,0 +1,13 @@
+# Build output
+build/
+out/
+dist/
+vcpkg_installed/
+*.dll
+*.pdb
+*.lib
+*.obj
+*.exp
+
+# IDE
+.vs/
