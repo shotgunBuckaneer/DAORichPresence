@@ -112,7 +112,7 @@ std::string guiType()
         return "In the Main Menu";
         
     case 22:
-        return "Checking the Chanter's Board in " + AreaName();
+        return "Checking a Quest Board in " + AreaName();
 
     case 23:
         return "Checking on Party Tactics";
