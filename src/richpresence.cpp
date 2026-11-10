@@ -21,10 +21,9 @@ int guiMode{-1};
 int ChargenMode{-1};
 
 // retrieve player character name from Token
-// Would prefer to use FullName, but turns out the LastName is lost once the save is loaded.
 std::string PCName()
 {
-    auto sPCName = dao::tlk::Resolve(L"<FirstName/>");
+    auto sPCName = dao::tlk::Resolve(L"<FullName/>");
     return dao::Utf8(sPCName);
 }
 
