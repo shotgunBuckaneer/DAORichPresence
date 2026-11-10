@@ -160,65 +160,84 @@ std::string ChargenType()
 std::string GameModeName(dao::GameMode mode)
 {
 
+    static std::string RetainedGM{"Unknown"};
+
     switch (mode)
     {
     case dao::GameMode::Explore:
         //we just-in-case clear the DialogueInitiator here to avoid any rare carry-over cases when the
         //next dialogue comes around out of order
         DialogueInitiator.clear();
-        return "Exploring " + AreaName();
+        RetainedGM = "Exploring " + AreaName();
+        break;
 
     case dao::GameMode::Combat:
         //ditto
         DialogueInitiator.clear();
-        return "Fighting in " + AreaName();
+        RetainedGM = "Fighting in " + AreaName();
+        break;
 
     case dao::GameMode::Dead:
-        return "Defeated";
+        RetainedGM = "Defeated";
+        break;
     
     //GUI is very broad, needs narrowing down
     //known and accepted caveat: This will not update the information if changing from one menu to another;
     //on the plus side, the Discord API will be unlikely to then reject too many information bursts
     //as spam or malicious if all a player does is quickly go through menus.
     case dao::GameMode::Gui:
-        return guiType();
+        RetainedGM = guiType();
+        break;
 
     case dao::GameMode::Dialog:
         //ensure returned owner string isn't empty, include name if not
-        return DialogueInitiator.empty() 
+        RetainedGM = DialogueInitiator.empty()
             ? "In a conversation" 
             : "Talking with " + DialogueInitiator;
+        break;
 
     case dao::GameMode::Cutscene:
-        return "In a cutscene";
+        RetainedGM = "In a cutscene";
+        break;
 
     case dao::GameMode::FlyCam:
-        return "Using the Flycam";
+        RetainedGM = "Using the Flycam";
+        break;
 
     //No one seems to know what this IS. Logging it as a warn in the unlikely event it is ever stumbled
     //upon.
     case dao::GameMode::Fixed:
         spdlog::warn("Encountered state Fixed");
-        return "Fixed(?)";
+        RetainedGM = "Fixed(?)";
+        break;
 
     case dao::GameMode::Pregame:
-        return "In the Main Menu";
+        RetainedGM = "On the Title Screen";
+        break;
 
+    //Don't want Loading to return anything, as the number of load-screens would just flood feeds.
     case dao::GameMode::Loading:
-        return "Loading...";
+        spdlog::debug("Loading, not for productive logging");
+        return RetainedGM;
 
     case dao::GameMode::Movie:
-        return "In a cutscene";
+        RetainedGM = "In a cutscene";
+        break;
 
     case dao::GameMode::CharGen:
-        return ChargenType();
+        RetainedGM = ChargenType();
+        break;
 
     case dao::GameMode::PartyPicker:
-        return "Selecting Party members";
+        RetainedGM = "Selecting Party members";
+        break;
 
     default:
-        return "Unknown";
+        RetainedGM = "Unknown";
+        spdlog::info("Unidentified GameMode {} encountered.", mode);
     }
+
+    return RetainedGM;
 }
 
 extern "C" __declspec(dllexport) bool __cdecl DAOLib_Load(const dao::LoaderInfo *info)
