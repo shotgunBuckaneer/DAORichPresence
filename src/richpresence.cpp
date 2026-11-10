@@ -1,3 +1,7 @@
+/*The goal of this DAOLib plugin is to collect and transmit data to Discord's Rich Presence feature.
+It can very reliably capture Player Name, Class, Level, location, and activity based on Game- and GUI
+modes.*/
+
 #include <string>
 
 #include "dao/Log.h"
