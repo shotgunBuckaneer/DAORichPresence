@@ -234,7 +234,7 @@ std::string GameModeName(dao::GameMode mode)
 
     default:
         RetainedGM = "Unknown";
-        spdlog::info("Unidentified GameMode {} encountered.", mode);
+        spdlog::info("Unidentified GameMode encountered.");
     }
 
     return RetainedGM;
@@ -245,7 +245,7 @@ extern "C" __declspec(dllexport) bool __cdecl DAOLib_Load(const dao::LoaderInfo 
     //plugin initialization
     if (info == nullptr || info->apiVersion != dao::kPluginApiVersion || !info->knownExecutable)
     {
-        spdlog::error("Mismatch between plugin built, loader and/or game");
+        spdlog::error("Mismatch between plugin build, loader and/or game");
         return false; // not the loader or the game this was built for
     }
         
