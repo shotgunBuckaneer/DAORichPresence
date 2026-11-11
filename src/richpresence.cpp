@@ -262,6 +262,22 @@ extern "C" __declspec(dllexport) bool __cdecl DAOLib_Load(const dao::LoaderInfo 
     dao::OpenLog("richpresence"); // Documents\BioWare\Dragon Age\daolib\richpresence.log
     spdlog::info("Plugin loaded successfully");
 
+    //Handlers aren't really needed at this point but the Initialization requires them as an argument
+    //empty handler struct might let us bypass
+    DiscordEventHandlers handlers{};
+
+    //Initialization of Discord RPC
+    Discord_Initialize("1570102592795840763", &handlers, 1, nullptr);
+
+    //Purely a test case: Try and send something at all
+    //initializing the struct to fill it as needed
+    DiscordRichPresence presence{};
+
+    presence.details    = "Testing DAORichPresence plugin";
+    presence.state      = "Exploring Thedas";
+
+    Discord_UpdatePresence(&presence);
+
     //Transition from load into area, logging thereof
     dao::events::OnScriptEvent(dao::script::EventType::ArealoadsavePreloadexit,
                               [](dao::ObjectId, const dao::CScriptEvent&) 
