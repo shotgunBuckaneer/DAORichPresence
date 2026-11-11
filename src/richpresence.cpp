@@ -14,6 +14,8 @@ modes.*/
 #include "dao/String.h"
 #include "dao/Tlk.h"
 
+#include "discord_rpc.h"
+
 //strings as global variable for transport from dllexport to GameMode switch
 std::string DialogueInitiator{};
 std::string LevelUpTargetName{};

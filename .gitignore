@@ -11,3 +11,7 @@ vcpkg_installed/
 
 # IDE
 .vs/
+
+#Exclude Discord RPC
+!extern/discord-rpc/win32-dynamic/bin/discord-rpc.dll
+!extern/discord-rpc/win32-dynamic/lib/discord-rpc.lib
