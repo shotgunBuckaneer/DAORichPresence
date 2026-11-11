@@ -123,6 +123,9 @@ std::string guiType()
     case 31:
         return "Charting the Fade";
 
+    // at present, it seems that there's a race going on when a merchant window is launched from within
+    // a dialogue, and the GameMode GUI event wins before the GUI change is registered. Don't really
+    // have a good workaround for that just yet, so often, it will run to the default case instead.
     case 32:
         return "Trading in " + AreaName();
 
