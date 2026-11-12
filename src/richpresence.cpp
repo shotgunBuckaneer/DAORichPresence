@@ -391,8 +391,7 @@ extern "C" __declspec(dllexport) bool __cdecl DAOLib_Load(const dao::LoaderInfo 
                                    presence.state = sGameMode.c_str();
                                    Discord_UpdatePresence(&presence);
 
-                                   spdlog::debug("Game mode changed: {}", 
-                                                GameModeName(newMode));
+                                   spdlog::debug("Game mode changed: {}", sGameMode);
         
                                });
     return true;
