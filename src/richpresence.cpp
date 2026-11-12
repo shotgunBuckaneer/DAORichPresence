@@ -26,6 +26,9 @@ int guiMode{-1};
 //ditto for Chargen mode
 int ChargenMode{-1};
 
+//saving Class as a variable for the Small Icon update
+int iPCClass{};
+
 // retrieve player character name from Token
 std::string PCName()
 {
@@ -36,8 +39,8 @@ std::string PCName()
 // Identify PC class via NWScript, return class string
 std::string PCClass()
 {
-    auto oHero      = dao::script::api::GetHero();
-    auto iPCClass   = dao::script::api::FloatToInt(dao::script::api::GetCreatureProperty(oHero, 27));
+    auto oHero  = dao::script::api::GetHero();
+    iPCClass    = dao::script::api::FloatToInt(dao::script::api::GetCreatureProperty(oHero, 27));
 
     switch (iPCClass)
     {
@@ -71,8 +74,8 @@ std::string PCLevel()
 // Logging action for both kinds of PC detection
 void PCAction()
 {
-    spdlog::info("Hero: {}, Class: {}, Level {}", PCName(), PCClass(), PCLevel());
-    spdlog::info("Area change registered");
+    spdlog::debug("Hero: {}, Class: {}, Level {}", PCName(), PCClass(), PCLevel());
+    spdlog::debug("Area change registered");
 }
 
 // Identify area in NWScript
@@ -269,34 +272,75 @@ extern "C" __declspec(dllexport) bool __cdecl DAOLib_Load(const dao::LoaderInfo 
     //Initialization of Discord RPC
     Discord_Initialize("1570102592795840763", &handlers, 1, nullptr);
 
-    //Purely a test case: Try and send something at all
     //initializing the struct to fill it as needed
-    DiscordRichPresence presence{};
+    static DiscordRichPresence presence{};
 
-    presence.details    = "Testing DAORichPresence plugin";
-    presence.state      = "Exploring Thedas";
-
-    Discord_UpdatePresence(&presence);
-
-    //Transition from load into area, logging thereof
+    //establishing string varibles
+    static std::string sName{};
+    static std::string sClassAndLevel{};
+    static std::string sGameMode{};
+    
+    //Transition from load into area, logging thereof, registration of Hero to RPC, updating of class
+    //icon
     dao::events::OnScriptEvent(dao::script::EventType::ArealoadsavePreloadexit,
                               [](dao::ObjectId, const dao::CScriptEvent&) 
                               {     
                                     PCAction();
+                                    sName = PCName();
+                                    sClassAndLevel = PCClass() + ", Level " + PCLevel();
+                                    presence.details = sName.c_str();
+                                    presence.smallImageText = sClassAndLevel.c_str();
+                                    switch (iPCClass)
+                                    {
+                                    case 1:
+                                        presence.smallImageKey = "classico_warrior";
+                                        break;
+                                    case 2:
+                                        presence.smallImageKey = "classico_mage";
+                                        break;
+                                    case 3:
+                                        presence.smallImageKey = "classico_rogue";
+                                        break;
+                                    default:
+                                        presence.smallImageKey = "secret";
+                                    }
+                                    Discord_UpdatePresence(&presence);
                               });
     
-    //Area (transition) identification, logging thereof
+    //Area (transition) identification, logging thereof, registration of Hero to RPC
     dao::events::OnScriptEvent(dao::script::EventType::ArealoadPreloadexit, 
                               [](dao::ObjectId, const dao::CScriptEvent&) 
                               { 
                                     PCAction();
+                                    sName = PCName();
+                                    sClassAndLevel = PCClass() + ", Level " + PCLevel();
+                                    presence.details = sName.c_str();
+                                    presence.smallImageText = sClassAndLevel.c_str();
+                                    switch (iPCClass)
+                                    {
+                                    case 1:
+                                        presence.smallImageKey = "classico_warrior";
+                                        break;
+                                    case 2:
+                                        presence.smallImageKey = "classico_mage";
+                                        break;
+                                    case 3:
+                                        presence.smallImageKey = "classico_rogue";
+                                        break;
+                                    default:
+                                        presence.smallImageKey = "secret";
+                                    }
+                                    Discord_UpdatePresence(&presence);
                               });
 
     //Safety check on level
     dao::events::OnScriptEvent(dao::script::EventType::Playerlevelup, 
                               [](dao::ObjectId, const dao::CScriptEvent&) 
                               {
-                                   spdlog::info("Extra check on level after level up event: Level {}", PCLevel());
+                                   spdlog::debug("Extra check on level after level up event: Level {}", PCLevel());
+                                   sClassAndLevel = PCClass() + ", Level " + PCLevel();
+                                   presence.smallImageText = sClassAndLevel.c_str();
+                                   Discord_UpdatePresence(&presence);
                               });
 
     // Identify dialogue event firing creature/placeable, including name as reported by NWScript
@@ -306,7 +350,7 @@ extern "C" __declspec(dllexport) bool __cdecl DAOLib_Load(const dao::LoaderInfo 
                               {
                                     auto sName          = dao::script::api::GetName(target);
                                     DialogueInitiator   = dao::Utf8(sName);
-                                    spdlog::info("Dialogue event registered");
+                                    spdlog::debug("Dialogue event registered");
                               });
 
     //detail GUI changes
@@ -316,7 +360,7 @@ extern "C" __declspec(dllexport) bool __cdecl DAOLib_Load(const dao::LoaderInfo 
                                     guiMode = event.Integer(0);
                                     //commented logging out, we don't need to log every one of these,
                                     //the log would very quickly swell.
-                                    //spdlog::info("GUI change detected: {}", guiMode);
+                                    //spdlog::debug("GUI change detected: {}", guiMode);
                               });
 
     //capture Chargen mode and target
@@ -343,8 +387,11 @@ extern "C" __declspec(dllexport) bool __cdecl DAOLib_Load(const dao::LoaderInfo 
                                [](dao::ObjectId, const dao::CScriptEvent &event) 
                                { 
                                    const auto newMode = static_cast<dao::GameMode>(event.Integer(0));
+                                   sGameMode = GameModeName(newMode);
+                                   presence.state = sGameMode.c_str();
+                                   Discord_UpdatePresence(&presence);
 
-                                   spdlog::info("Game mode changed: {}", 
+                                   spdlog::debug("Game mode changed: {}", 
                                                 GameModeName(newMode));
         
                                });
