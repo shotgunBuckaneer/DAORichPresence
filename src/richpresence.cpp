@@ -3,6 +3,8 @@ It can very reliably capture Player Name, Class, Level, location, and activity b
 modes.*/
 
 #include <string>
+#include <algorithm>
+#include <array>
 
 #include "dao/Log.h"
 #include "dao/Plugin.h"
@@ -16,6 +18,24 @@ modes.*/
 
 #include "discord_rpc.h"
 
+//DAO consts
+const int GUI_CHARACTER_RECORD = 0;
+const int GUI_CONTAINER_INVENTORY = 2;
+const int GUI_INVENTORY = 8;
+const int GUI_JOURNAL = 9;
+const int GUI_SPELLS_TALENTS = 10;
+const int GUI_SKILLS = 13;
+const int GUI_MAP = 15;
+const int GUI_WORLD_MAP = 16;
+const int GUI_MAIN_MENU = 20;
+const int GUI_CHANTERS = 22;
+const int GUI_TACTICS = 23;
+const int GUI_FADE_MAP = 31;
+const int GUI_STORE = 32;
+const int GUI_ITEM_UPGRADE = 37;
+const int GUI_CRAFTING = 38;
+const int GUI_SLIDESHOW = 48;
+
 //strings as global variable for transport from dllexport to GameMode switch
 std::string DialogueInitiator{};
 std::string LevelUpTargetName{};
@@ -28,6 +48,31 @@ int ChargenMode{-1};
 
 //saving Class as a variable for the Small Icon update
 int iPCClass{};
+
+//GUI array for checking against in the GUI mode determination
+static constexpr std::array<int, 16> s_variants{
+    GUI_CHARACTER_RECORD,
+    GUI_CONTAINER_INVENTORY,
+    GUI_INVENTORY,
+    GUI_JOURNAL,
+    GUI_SPELLS_TALENTS,
+    GUI_SKILLS,
+    GUI_MAP,
+    GUI_WORLD_MAP,
+    GUI_MAIN_MENU,
+    GUI_CHANTERS,
+    GUI_TACTICS,
+    GUI_FADE_MAP,
+    GUI_STORE,
+    GUI_ITEM_UPGRADE,
+    GUI_CRAFTING,
+    GUI_SLIDESHOW
+};
+
+bool IsRelevantGUI(int mode)
+{
+    return std::find(s_variants.begin(), s_variants.end(), mode) != s_variants.end();
+}
 
 // retrieve player character name from Token
 std::string PCName()
@@ -92,55 +137,55 @@ std::string guiType()
 {
     switch (guiMode)
     {
-    case 0:
+    case GUI_CHARACTER_RECORD:
         return "Examining a character record";
 
-    case 2:
+    case GUI_CONTAINER_INVENTORY:
         return "Rummaging through a container";
 
-    case 8:
+    case GUI_INVENTORY:
         return "In the Inventory";
 
-    case 9:
+    case GUI_JOURNAL:
         return "Checking the Journal";
 
-    case 10:
+    case GUI_SPELLS_TALENTS:
         return "Checking Abilities";
 
-    case 13:
+    case GUI_SKILLS:
         return "Checking Skills";
 
-    case 15:
-        return "Examining the local Map";
+    case GUI_MAP:
+        return "Examining the local Map of " + AreaName();
 
-    case 16:
+    case GUI_WORLD_MAP:
         return "Examining the Wide Open World Map";
 
-    case 20:
+    case GUI_MAIN_MENU:
         return "In the Main Menu";
         
-    case 22:
+    case GUI_CHANTERS:
         return "Checking a Quest Board in " + AreaName();
 
-    case 23:
+    case GUI_TACTICS:
         return "Checking on Party Tactics";
 
-    case 31:
+    case GUI_FADE_MAP:
         return "Charting the Fade";
 
     // at present, it seems that there's a race going on when a merchant window is launched from within
     // a dialogue, and the GameMode GUI event wins before the GUI change is registered. Don't really
     // have a good workaround for that just yet, so often, it will run to the default case instead.
-    case 32:
+    case GUI_STORE:
         return "Trading in " + AreaName();
 
-    case 37:
+    case GUI_ITEM_UPGRADE:
         return "Enchantment!";
 
-    case 38:
+    case GUI_CRAFTING:
         return "Crafting Items";
 
-    case 48:
+    case GUI_SLIDESHOW:
         return "The end...?";
 
     default:
@@ -148,7 +193,7 @@ std::string guiType()
     }
 }
 
-//as GUI Chargen can be either actual creation or level up, we need to determine which
+//as GM Chargen can be either actual creation or level up, we need to determine which
 std::string ChargenType()
 {
     switch (ChargenMode)
@@ -193,10 +238,8 @@ std::string GameModeName(dao::GameMode mode)
         RetainedGM = "Defeated";
         break;
     
-    //GUI is very broad, needs narrowing down
-    //known and accepted caveat: This will not update the information if changing from one menu to another;
-    //on the plus side, the Discord API will be unlikely to then reject too many information bursts
-    //as spam or malicious if all a player does is quickly go through menus.
+    //GUI should now be handled by its own function, but I am keeping this intact just in case something
+    //manages to slip through and creates a false default state.
     case dao::GameMode::Gui:
         RetainedGM = guiType();
         break;
@@ -279,7 +322,9 @@ extern "C" __declspec(dllexport) bool __cdecl DAOLib_Load(const dao::LoaderInfo 
     static std::string sName{};
     static std::string sClassAndLevel{};
     static std::string sGameMode{};
-    
+    static std::string sGuiMode{};
+
+
     //Transition from load into area, logging thereof, registration of Hero to RPC, updating of class
     //icon
     dao::events::OnScriptEvent(dao::script::EventType::ArealoadsavePreloadexit,
@@ -353,11 +398,19 @@ extern "C" __declspec(dllexport) bool __cdecl DAOLib_Load(const dao::LoaderInfo 
                                     spdlog::debug("Dialogue event registered");
                               });
 
-    //detail GUI changes
+    //detail GUI changes, update if needed
     dao::events::OnScriptEvent(dao::script::EventType::GuiOpened, 
                               [](dao::ObjectId, const dao::CScriptEvent &event) 
                               {
                                     guiMode = event.Integer(0);
+                                    auto iGM = dao::script::api::GetGameMode();
+                                    //Double check that our  GUI switch is relevant AND that we're in GameMode GUI)
+                                    if (IsRelevantGUI(guiMode) && iGM == 3)
+                                    {
+                                        sGuiMode = guiType();
+                                        presence.state = sGuiMode.c_str();
+                                        Discord_UpdatePresence(&presence);
+                                    }
                                     //commented logging out, we don't need to log every one of these,
                                     //the log would very quickly swell.
                                     //spdlog::debug("GUI change detected: {}", guiMode);
@@ -385,14 +438,18 @@ extern "C" __declspec(dllexport) bool __cdecl DAOLib_Load(const dao::LoaderInfo 
     //register and log game mode change
     dao::events::OnScriptEvent(dao::script::EventType::GamemodeChange,
                                [](dao::ObjectId, const dao::CScriptEvent &event) 
-                               { 
-                                   const auto newMode = static_cast<dao::GameMode>(event.Integer(0));
-                                   sGameMode = GameModeName(newMode);
-                                   presence.state = sGameMode.c_str();
-                                   Discord_UpdatePresence(&presence);
+                               {
+                                   //GUI is handled by its own event
+                                   if (event.Integer(0) != 3)
+                                   {
+                                       const auto newMode = static_cast<dao::GameMode>(event.Integer(0));
+                                       sGameMode = GameModeName(newMode);
+                                       presence.state = sGameMode.c_str();
+                                       Discord_UpdatePresence(&presence);
 
-                                   spdlog::debug("Game mode changed: {}", sGameMode);
-        
+                                       spdlog::debug("Game mode changed: {}", sGameMode);
+                                   }
+
                                });
     return true;
 }
