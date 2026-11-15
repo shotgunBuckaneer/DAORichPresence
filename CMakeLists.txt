@@ -24,7 +24,10 @@ set_target_properties(discord_rpc PROPERTIES
 )
 
 # The actual plugin to be built
-add_daolib_plugin(richpresence SOURCES src/richpresence.cpp)
+add_daolib_plugin(richpresence SOURCES 
+	src/richpresence.cpp
+	src/heroicStats.cpp
+	)
 
 #Link 'em
 target_link_libraries(richpresence PRIVATE discord_rpc)

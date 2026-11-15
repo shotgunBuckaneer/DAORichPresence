@@ -18,23 +18,26 @@ modes.*/
 
 #include "discord_rpc.h"
 
+#include "heroicStats.h"
+
 //DAO consts
-const int GUI_CHARACTER_RECORD = 0;
-const int GUI_CONTAINER_INVENTORY = 2;
-const int GUI_INVENTORY = 8;
-const int GUI_JOURNAL = 9;
-const int GUI_SPELLS_TALENTS = 10;
-const int GUI_SKILLS = 13;
-const int GUI_MAP = 15;
-const int GUI_WORLD_MAP = 16;
-const int GUI_MAIN_MENU = 20;
-const int GUI_CHANTERS = 22;
-const int GUI_TACTICS = 23;
-const int GUI_FADE_MAP = 31;
-const int GUI_STORE = 32;
-const int GUI_ITEM_UPGRADE = 37;
-const int GUI_CRAFTING = 38;
-const int GUI_SLIDESHOW = 48;
+//GUI
+constexpr int GUI_CHARACTER_RECORD = 0;
+constexpr int GUI_CONTAINER_INVENTORY = 2;
+constexpr int GUI_INVENTORY = 8;
+constexpr int GUI_JOURNAL = 9;
+constexpr int GUI_SPELLS_TALENTS = 10;
+constexpr int GUI_SKILLS = 13;
+constexpr int GUI_MAP = 15;
+constexpr int GUI_WORLD_MAP = 16;
+constexpr int GUI_MAIN_MENU = 20;
+constexpr int GUI_CHANTERS = 22;
+constexpr int GUI_TACTICS = 23;
+constexpr int GUI_FADE_MAP = 31;
+constexpr int GUI_STORE = 32;
+constexpr int GUI_ITEM_UPGRADE = 37;
+constexpr int GUI_CRAFTING = 38;
+constexpr int GUI_SLIDESHOW = 48;
 
 //strings as global variable for transport from dllexport to GameMode switch
 std::string DialogueInitiator{};
