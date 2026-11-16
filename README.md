@@ -11,5 +11,4 @@ To uninstall, remove the plugins\richpresence folder completely.
 Should support any of the official game versions from EA, Gog or Steam that are also supported by DAOLib itself.
 
 # Known limitations
-* Event timing might make it so the Game Mode "GUI", with GUI type STORE, is not successfully recognized at all times. In such a case, it will default back to "In a menu".
-* Once in a menu, further GUI changes are not registered; this is owing to the way in which GUI and Game Mode changes are independently listened to.
+* Triggers are registered via Event Module, so changes aren't noticed until starting a new game or loading a save.
