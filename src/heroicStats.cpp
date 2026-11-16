@@ -82,3 +82,8 @@ std::string STAT_GrouptypeDemons()
 {
 	return "Demons and undead killed: " + dao::Utf8(GetHeroicStatValue(hero_stat::GROUPTYPE_DEMONS));
 }
+
+std::string STAT_GrouptypeFantastical()
+{
+	return "Fantastic creatures killed: " + dao::Utf8(GetHeroicStatValue(hero_stat::GROUPTYPE_FANTASTICAL));
+}

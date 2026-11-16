@@ -55,3 +55,4 @@ std::string STAT_PartyKills();
 std::string STAT_PartyDamageDealt();
 std::string STAT_MostPowerfulSlainByParty();
 std::string STAT_GrouptypeDemons();
+std::string STAT_GrouptypeFantastical();
