@@ -112,11 +112,8 @@ std::string PCClass()
 std::string PCLevel()
 {
     auto oHero      = dao::script::api::GetHero();
-    auto iLevel     = dao::script::api::FloatToInt(dao::script::api::GetCreatureProperty(oHero, 15, 1));
-    //roundabout conversion from Float, the type all properties are, to int so the value becomes truncated;
-    //then to wstring, and finally to UTF8 for use in the "real world".
-    auto sLevel     = dao::script::api::IntToString(iLevel);
-    return dao::Utf8(sLevel);
+    auto fLevel     = dao::script::api::FloatToString(dao::script::api::GetCreatureProperty(oHero, 15, 1), 2, 0);
+    return dao::Utf8(fLevel);
 }
 
 // Logging action for both kinds of PC detection
