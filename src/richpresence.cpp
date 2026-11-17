@@ -389,7 +389,6 @@ extern "C" __declspec(dllexport) bool __cdecl DAOLib_Load(const dao::LoaderInfo 
                               });
 
     // Identify dialogue event firing creature/placeable, including name as reported by NWScript
-
     dao::events::OnScriptEvent(dao::script::EventType::Dialogue,
                               [](dao::ObjectId target, const dao::CScriptEvent&)
                               {
