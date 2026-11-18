@@ -42,35 +42,4 @@ namespace hero_stat
 	inline constexpr int ITEMS_CRAFTED = 2031;
 }
 
-std::string STAT_Kills();
-std::string STAT_TotalDamageDealt();
-std::string STAT_FriendlyFireDealt();
-std::string STAT_HighestDamageDealt();
-std::string STAT_TotalDamagePercent();
-std::string STAT_HitRate();
-std::string STAT_MostPowerfulSlain();
-std::string STAT_Injuries();
-std::string STAT_PartyKills();
-std::string STAT_PartyDamageDealt();
-std::string STAT_MostPowerfulSlainByParty();
-std::string STAT_GrouptypeDemons();
-std::string STAT_GrouptypeFantastical();
-std::string STAT_GrouptypeConstruct();
-std::string STAT_GrouptypeHumanoids();
-std::string STAT_GrouptypeDarkspawn();
-std::string STAT_GrouptypeArchEnemies();
-std::string STAT_GrouptypeDraconics();
-std::string STAT_GrouptypeCorruptedAnimals();
-std::string STAT_GrouptypeVermin();
-std::string STAT_GrouptypeAnimals();
-std::string STAT_StealingSuccess();
-std::string STAT_StealingFailure();
-std::string STAT_MostMoneyEver();
-std::string STAT_MoneySpent();
-std::string STAT_Dialogues();
-std::string STAT_CodexEntries();
-std::string STAT_WalkedDistanceMiles();
-std::string STAT_AreasExplored();
-std::string STAT_TotalTimePlayed();
-std::string STAT_WalkedDistanceKilometers();
-std::string STAT_ItemsCrafted();
+std::string STAT_Random();
