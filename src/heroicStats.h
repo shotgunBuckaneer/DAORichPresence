@@ -73,3 +73,5 @@ std::string STAT_CodexEntries();
 std::string STAT_WalkedDistanceMiles();
 std::string STAT_AreasExplored();
 std::string STAT_TotalTimePlayed();
+std::string STAT_WalkedDistanceKilometers();
+std::string STAT_ItemsCrafted();

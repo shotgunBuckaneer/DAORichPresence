@@ -18,6 +18,12 @@ std::wstring GetHeroicStatValue(int iValue)
 								iValue == hero_stat::HIT_RATE ||
 								iValue == hero_stat::AREAS_EXPLORED;
 
+	//preconvert meters to kilometers
+	if (iValue == hero_stat::WALKED_DISTANCE_METERS)
+	{
+		fResult = fResult / 1000.0f;
+	}
+
 	return dao::script::api::FloatToString(fResult, 18, bKeepDecimals ? 2 : 0);
 }
 
@@ -196,4 +202,14 @@ std::string STAT_TotalTimePlayed()
 	auto fResult = dao::script::api::GetCreatureProperty(oHero, hero_stat::TOTAL_TIME_PLAYED);
 
 	return "Time played: " + FormatDuration(fResult);
+}
+
+std::string STAT_WalkedDistanceKilometers()
+{
+	return "Kilometers traveled: " + dao::Utf8(GetHeroicStatValue(hero_stat::WALKED_DISTANCE_METERS));
+}
+
+std::string STAT_ItemsCrafted()
+{
+	return "Items crafted: " + dao::Utf8(GetHeroicStatValue(hero_stat::ITEMS_CRAFTED));
 }
