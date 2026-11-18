@@ -7,42 +7,47 @@
 #include <iomanip>
 #include <sstream>
 
-// Retrieve stats, round to two digits past decimal based on if we need decimal points or not
-std::wstring GetHeroicStatValue(int iValue)
+//implementations of helpers that don't need to be global
+namespace
 {
-	auto oHero = dao::script::api::GetHero();
-	float fResult = dao::script::api::GetCreatureProperty(oHero, iValue);
-	const bool bKeepDecimals =	iValue == hero_stat::WALKED_DISTANCE_METERS ||
-								iValue == hero_stat::WALKED_DISTANCE_MILES ||
-								iValue == hero_stat::TOTAL_DAMAGE_PERCENT ||
-								iValue == hero_stat::HIT_RATE ||
-								iValue == hero_stat::AREAS_EXPLORED;
-
-	//preconvert meters to kilometers
-	if (iValue == hero_stat::WALKED_DISTANCE_METERS)
+	// Retrieve stats, round to two digits past decimal based on if we need decimal points or not
+	std::wstring GetHeroicStatValue(int iValue)
 	{
-		fResult = fResult / 1000.0f;
+		auto oHero = dao::script::api::GetHero();
+		float fResult = dao::script::api::GetCreatureProperty(oHero, iValue);
+		const bool bKeepDecimals =	iValue == hero_stat::WALKED_DISTANCE_METERS ||
+									iValue == hero_stat::WALKED_DISTANCE_MILES ||
+									iValue == hero_stat::TOTAL_DAMAGE_PERCENT ||
+									iValue == hero_stat::HIT_RATE ||
+									iValue == hero_stat::AREAS_EXPLORED;
+
+		//preconvert meters to kilometers
+		if (iValue == hero_stat::WALKED_DISTANCE_METERS)
+		{
+			fResult = fResult / 1000.0f;
+		}
+
+		return dao::script::api::FloatToString(fResult, 18, bKeepDecimals ? 2 : 0);
 	}
 
-	return dao::script::api::FloatToString(fResult, 18, bKeepDecimals ? 2 : 0);
-}
+	//A helper to convert playtime into sensible hh:mm:ss display, as playtime is recorded in seconds
+	std::string FormatDuration(float fSeconds)
+	{
+		auto totalSeconds = static_cast<unsigned long long>(fSeconds);
 
-//A helper to convert playtime into sensible hh:mm:ss display, as playtime is recorded in seconds
-std::string FormatDuration(float fSeconds)
-{
-	auto totalSeconds = static_cast<unsigned long long>(fSeconds);
+		auto hours		= totalSeconds / 3600;
+		auto minutes	= (totalSeconds % 3600) / 60;
+		auto seconds	= totalSeconds % 60;
 
-	auto hours		= totalSeconds / 3600;
-	auto minutes	= (totalSeconds % 3600) / 60;
-	auto seconds	= totalSeconds % 60;
+		std::ostringstream stream;
+		stream	<< std::setfill('0')
+				<< std::setw(2) << hours << ':'
+				<< std::setw(2) << minutes << ':'
+				<< std::setw(2) << seconds;
 
-	std::ostringstream stream;
-	stream	<< std::setfill('0')
-			<< std::setw(2) << hours << ':'
-			<< std::setw(2) << minutes << ':'
-			<< std::setw(2) << seconds;
+		return stream.str();
+	}
 
-	return stream.str();
 }
 
 std::string STAT_Kills()
