@@ -358,6 +358,7 @@ extern "C" __declspec(dllexport) bool __cdecl DAOLib_Load(const dao::LoaderInfo 
 
     //Initializing first status message
     presence.state = "Starting the game...";
+    Discord_UpdatePresence(&presence);
 
 
     //Transition from load into area, logging thereof, registration of Hero to RPC, updating of class
