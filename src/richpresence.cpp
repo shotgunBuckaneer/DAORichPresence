@@ -116,11 +116,40 @@ std::string PCLevel()
     return dao::Utf8(fLevel);
 }
 
-// Logging action for both kinds of PC detection
-void PCAction()
+namespace
 {
-    spdlog::debug("Hero: {}, Class: {}, Level {}", PCName(), PCClass(), PCLevel());
-    spdlog::debug("Area change registered");
+    // Action for both kinds of PC detection on AreaLoad events
+    void PCAction(DiscordRichPresence& presence, std::string& sName, std::string& sClassAndLevel)
+    {
+        //to avoid call redundancy
+        const auto sPCName = PCName();
+        const auto sPCClass = PCClass();
+        const auto sPCLevel = PCLevel();
+
+        spdlog::debug("Hero: {}, Class: {}, Level {}", sPCName, sPCClass, sPCLevel);
+        spdlog::debug("Area change registered");
+
+        sName = sPCName;
+        sClassAndLevel = sPCClass + ", Level " + sPCLevel;
+        presence.details = sName.c_str();
+        presence.smallImageText = sClassAndLevel.c_str();
+        switch (iPCClass)
+        {
+        case 1:
+            presence.smallImageKey = "classico_warrior";
+            break;
+        case 2:
+            presence.smallImageKey = "classico_mage";
+            break;
+        case 3:
+            presence.smallImageKey = "classico_rogue";
+            break;
+        default:
+            presence.smallImageKey = "secret";
+        }
+        Discord_UpdatePresence(&presence);
+    }
+
 }
 
 // Identify area in NWScript
@@ -333,52 +362,14 @@ extern "C" __declspec(dllexport) bool __cdecl DAOLib_Load(const dao::LoaderInfo 
     dao::events::OnScriptEvent(dao::script::EventType::ArealoadsavePreloadexit,
                               [](dao::ObjectId, const dao::CScriptEvent&) 
                               {     
-                                    PCAction();
-                                    sName = PCName();
-                                    sClassAndLevel = PCClass() + ", Level " + PCLevel();
-                                    presence.details = sName.c_str();
-                                    presence.smallImageText = sClassAndLevel.c_str();
-                                    switch (iPCClass)
-                                    {
-                                    case 1:
-                                        presence.smallImageKey = "classico_warrior";
-                                        break;
-                                    case 2:
-                                        presence.smallImageKey = "classico_mage";
-                                        break;
-                                    case 3:
-                                        presence.smallImageKey = "classico_rogue";
-                                        break;
-                                    default:
-                                        presence.smallImageKey = "secret";
-                                    }
-                                    Discord_UpdatePresence(&presence);
+                                    PCAction(presence, sName, sClassAndLevel);
                               });
     
     //Area (transition) identification, logging thereof, registration of Hero to RPC
     dao::events::OnScriptEvent(dao::script::EventType::ArealoadPreloadexit, 
                               [](dao::ObjectId, const dao::CScriptEvent&) 
                               { 
-                                    PCAction();
-                                    sName = PCName();
-                                    sClassAndLevel = PCClass() + ", Level " + PCLevel();
-                                    presence.details = sName.c_str();
-                                    presence.smallImageText = sClassAndLevel.c_str();
-                                    switch (iPCClass)
-                                    {
-                                    case 1:
-                                        presence.smallImageKey = "classico_warrior";
-                                        break;
-                                    case 2:
-                                        presence.smallImageKey = "classico_mage";
-                                        break;
-                                    case 3:
-                                        presence.smallImageKey = "classico_rogue";
-                                        break;
-                                    default:
-                                        presence.smallImageKey = "secret";
-                                    }
-                                    Discord_UpdatePresence(&presence);
+                                    PCAction(presence, sName, sClassAndLevel);
                               });
 
     //Safety check on level
