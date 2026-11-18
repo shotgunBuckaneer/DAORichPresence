@@ -7,7 +7,7 @@
 #include <iomanip>
 #include <sstream>
 
-// Retrieve stats, truncate based on if we need decimal points or not
+// Retrieve stats, round to two digits past decimal based on if we need decimal points or not
 std::wstring GetHeroicStatValue(int iValue)
 {
 	auto oHero = dao::script::api::GetHero();
@@ -34,7 +34,7 @@ std::string FormatDuration(float fSeconds)
 
 	auto hours		= totalSeconds / 3600;
 	auto minutes	= (totalSeconds % 3600) / 60;
-	auto seconds	= totalSeconds & 60;
+	auto seconds	= totalSeconds % 60;
 
 	std::ostringstream stream;
 	stream	<< std::setfill('0')
@@ -67,7 +67,7 @@ std::string STAT_HighestDamageDealt()
 
 std::string STAT_TotalDamagePercent()
 {
-	return "Contribution to party damage: " + dao::Utf8(GetHeroicStatValue(hero_stat::TOTAL_DAMAGE_PERCENT));
+	return "Contribution to party damage: " + dao::Utf8(GetHeroicStatValue(hero_stat::TOTAL_DAMAGE_PERCENT)) + "%";
 }
 
 std::string STAT_HitRate()

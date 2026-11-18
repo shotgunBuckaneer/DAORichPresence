@@ -42,7 +42,6 @@ namespace hero_stat
 	inline constexpr int ITEMS_CRAFTED = 2031;
 }
 
-std::wstring GetHeroicStatValue();
 std::string STAT_Kills();
 std::string STAT_TotalDamageDealt();
 std::string STAT_FriendlyFireDealt();
