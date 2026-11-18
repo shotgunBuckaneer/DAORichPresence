@@ -135,6 +135,7 @@ namespace
         presence.details = sName.c_str();
         presence.smallImageText = sClassAndLevel.c_str();
         presence.largeImageText = sHeroicStat.c_str();
+        presence.largeImageKey = "secret";
         switch (iPCClass)
         {
         case 1:
