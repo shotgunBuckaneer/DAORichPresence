@@ -119,7 +119,7 @@ std::string PCLevel()
 namespace
 {
     // Action for both kinds of PC detection on AreaLoad events
-    void PCAction(DiscordRichPresence& presence, std::string& sName, std::string& sClassAndLevel)
+    void PCAction(DiscordRichPresence& presence, std::string& sName, std::string& sClassAndLevel, std::string& sHeroicStat)
     {
         //to avoid call redundancy
         const auto sPCName = PCName();
@@ -131,8 +131,10 @@ namespace
 
         sName = sPCName;
         sClassAndLevel = sPCClass + ", Level " + sPCLevel;
+        sHeroicStat = STAT_Random();
         presence.details = sName.c_str();
         presence.smallImageText = sClassAndLevel.c_str();
+        presence.largeImageText = sHeroicStat.c_str();
         switch (iPCClass)
         {
         case 1:
@@ -350,6 +352,7 @@ extern "C" __declspec(dllexport) bool __cdecl DAOLib_Load(const dao::LoaderInfo 
     //establishing string varibles
     static std::string sName{};
     static std::string sClassAndLevel{};
+    static std::string sHeroicStat{};
     static std::string sGameMode{};
     static std::string sGuiMode{};
 
@@ -362,14 +365,14 @@ extern "C" __declspec(dllexport) bool __cdecl DAOLib_Load(const dao::LoaderInfo 
     dao::events::OnScriptEvent(dao::script::EventType::ArealoadsavePreloadexit,
                               [](dao::ObjectId, const dao::CScriptEvent&) 
                               {     
-                                    PCAction(presence, sName, sClassAndLevel);
+                                    PCAction(presence, sName, sClassAndLevel, sHeroicStat);
                               });
     
     //Area (transition) identification, logging thereof, registration of Hero to RPC
     dao::events::OnScriptEvent(dao::script::EventType::ArealoadPreloadexit, 
                               [](dao::ObjectId, const dao::CScriptEvent&) 
                               { 
-                                    PCAction(presence, sName, sClassAndLevel);
+                                    PCAction(presence, sName, sClassAndLevel, sHeroicStat);
                               });
 
     //Safety check on level

@@ -7,6 +7,7 @@
 #include <iomanip>
 #include <sstream>
 #include <array>
+#include <random>
 
 //DAO consts
 namespace hero_stat
@@ -294,4 +295,16 @@ namespace
 	&STAT_ItemsCrafted
 	};
 
+}
+
+//pulls one random Heroic Stat.
+std::string STAT_Random()
+{
+	static std::mt19937 rng{ std::random_device{}() };
+
+	std::uniform_int_distribution<std::size_t> distribution{
+		0, s_stats.size() - 1
+	};
+
+	return s_stats[distribution(rng)]();
 }
