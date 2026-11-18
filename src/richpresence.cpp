@@ -324,6 +324,9 @@ extern "C" __declspec(dllexport) bool __cdecl DAOLib_Load(const dao::LoaderInfo 
     static std::string sGameMode{};
     static std::string sGuiMode{};
 
+    //Initializing first status message
+    presence.state = "Starting the game...";
+
 
     //Transition from load into area, logging thereof, registration of Hero to RPC, updating of class
     //icon
