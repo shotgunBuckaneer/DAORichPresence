@@ -11,4 +11,4 @@ To uninstall, remove the plugins\richpresence folder completely.
 Should support any of the official game versions from EA, Gog or Steam that are also supported by DAOLib itself.
 
 # Known limitations
-* Triggers are registered via Event Module, so changes aren't noticed until starting a new game or loading a save.
+* None currently.
