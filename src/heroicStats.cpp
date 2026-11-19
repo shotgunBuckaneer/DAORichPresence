@@ -46,10 +46,10 @@ namespace
 		inline constexpr int MONEY_SPENT = 2018;
 		inline constexpr int DIALOGUES = 2019;
 		inline constexpr int CODEX_ENTRIES = 2020;
-		inline constexpr int WALKED_DISTANCE_MILES = 2021;
+		//inline constexpr int WALKED_DISTANCE_MILES = 2021;
 		inline constexpr int AREAS_EXPLORED = 2022;
 		inline constexpr int TOTAL_TIME_PLAYED = 2023;
-		inline constexpr int WALKED_DISTANCE_METERS = 2028;
+		//inline constexpr int WALKED_DISTANCE_METERS = 2028;
 		inline constexpr int ITEMS_CRAFTED = 2031;
 	}
 
@@ -58,17 +58,18 @@ namespace
 	{
 		auto oHero = dao::script::api::GetHero();
 		float fResult = dao::script::api::GetCreatureProperty(oHero, iValue);
-		const bool bKeepDecimals =	iValue == hero_stat::WALKED_DISTANCE_METERS ||
-									iValue == hero_stat::WALKED_DISTANCE_MILES ||
+		const bool bKeepDecimals =	//iValue == hero_stat::WALKED_DISTANCE_METERS ||
+									//iValue == hero_stat::WALKED_DISTANCE_MILES ||
 									iValue == hero_stat::TOTAL_DAMAGE_PERCENT ||
 									iValue == hero_stat::HIT_RATE ||
 									iValue == hero_stat::AREAS_EXPLORED;
 
 		//preconvert meters to kilometers
-		if (iValue == hero_stat::WALKED_DISTANCE_METERS)
-		{
-			fResult = fResult / 1000.0f;
-		}
+		//DEPRECATED - Distance travelled is not recorded by the game.
+		//if (iValue == hero_stat::WALKED_DISTANCE_METERS)
+		//{
+		//	fResult = fResult / 1000.0f;
+		//}
 
 		return dao::script::api::FloatToString(fResult, 18, bKeepDecimals ? 2 : 0);
 	}
@@ -232,10 +233,11 @@ namespace
 		return "Codex entries discovered: " + dao::Utf8(GetHeroicStatValue(hero_stat::CODEX_ENTRIES));
 	}
 
-	std::string STAT_WalkedDistanceMiles()
-	{
-		return "Miles traveled: " + dao::Utf8(GetHeroicStatValue(hero_stat::WALKED_DISTANCE_MILES));
-	}
+	//DEPRECATED - Distance travelled is not recorded by the game.
+	//std::string STAT_WalkedDistanceMiles()
+	//{
+	//	return "Miles traveled: " + dao::Utf8(GetHeroicStatValue(hero_stat::WALKED_DISTANCE_MILES));
+	//}
 
 	std::string STAT_AreasExplored()
 	{
@@ -250,10 +252,11 @@ namespace
 		return "Time played: " + FormatDuration(fResult);
 	}
 
-	std::string STAT_WalkedDistanceKilometers()
-	{
-		return "Kilometers traveled: " + dao::Utf8(GetHeroicStatValue(hero_stat::WALKED_DISTANCE_METERS));
-	}
+	//DEPRECATED - Distance travelled is not recorded by the game.
+	//std::string STAT_WalkedDistanceKilometers()
+	//{
+	//	return "Kilometers traveled: " + dao::Utf8(GetHeroicStatValue(hero_stat::WALKED_DISTANCE_METERS));
+	//}
 
 	std::string STAT_ItemsCrafted()
 	{
@@ -261,7 +264,7 @@ namespace
 	}
 
 	//array for randomizer as function pointers
-	const std::array<std::string(*)(), 32> s_stats{
+	const std::array<std::string(*)(), 30> s_stats{
 	&STAT_Kills,
 	&STAT_TotalDamageDealt,
 	&STAT_FriendlyFireDealt,
@@ -289,10 +292,10 @@ namespace
 	&STAT_MoneySpent,
 	&STAT_Dialogues,
 	&STAT_CodexEntries,
-	&STAT_WalkedDistanceMiles,
+//	&STAT_WalkedDistanceMiles,
 	&STAT_AreasExplored,
 	&STAT_TotalTimePlayed,
-	&STAT_WalkedDistanceKilometers,
+//	&STAT_WalkedDistanceKilometers,
 	&STAT_ItemsCrafted
 	};
 
