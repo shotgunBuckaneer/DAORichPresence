@@ -350,7 +350,7 @@ extern "C" __declspec(dllexport) bool __cdecl DAOLib_Load(const dao::LoaderInfo 
     //initializing the struct to fill it as needed
     static DiscordRichPresence presence{};
 
-    //establishing string varibles
+    //establishing string variables
     static std::string sName{};
     static std::string sClassAndLevel{};
     static std::string sHeroicStat{};
