@@ -9,6 +9,9 @@
 #include <array>
 #include <random>
 
+//default Image Key for if we get an unexpected invalid state
+const char* STAT_ImageKey = "secret";
+
 //implementations of helpers that don't need to be global
 namespace
 {
@@ -111,6 +114,7 @@ namespace
 
 	std::string STAT_Kills()
 	{
+		Stat_ImageKey = "ach_feat_grey_warden";
 		return "Kills: " + dao::Utf8(GetHeroicStatValue(hero_stat::KILLS));
 	}
 
