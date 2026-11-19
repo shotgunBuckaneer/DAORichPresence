@@ -92,6 +92,23 @@ namespace
 		return stream.str();
 	}
 
+	//A helper to split currency values akin to how DAO displays them; essentially, D&D style
+	std::string FormatCurrency(float fMoney)
+	{
+		auto moneySum = static_cast<unsigned long long>(fMoney);
+
+		auto gold	= moneySum / 10000;
+		auto silver = (moneySum % 10000) / 100;
+		auto copper = moneySum % 100;
+
+		std::ostringstream stream;
+		stream	<< gold << "🟡 "
+				<< silver << "⚪ "
+				<< copper << "🟤";
+
+		return stream.str();
+	}
+
 	std::string STAT_Kills()
 	{
 		return "Kills: " + dao::Utf8(GetHeroicStatValue(hero_stat::KILLS));
@@ -215,12 +232,18 @@ namespace
 
 	std::string STAT_MostMoneyEver()
 	{
-		return "Most money at once: " + dao::Utf8(GetHeroicStatValue(hero_stat::MOST_MONEY_EVER));
+		auto oHero = dao::script::api::GetHero();
+		auto fResult = dao::script::api::GetCreatureProperty(oHero, hero_stat::MOST_MONEY_EVER);
+
+		return "Most money at once: " + FormatCurrency(fResult);
 	}
 
 	std::string STAT_MoneySpent()
 	{
-		return "Money spent: " + dao::Utf8(GetHeroicStatValue(hero_stat::MONEY_SPENT));
+		auto oHero = dao::script::api::GetHero();
+		auto fResult = dao::script::api::GetCreatureProperty(oHero, hero_stat::MONEY_SPENT);
+		
+		return "Money spent: " + FormatCurrency(fResult);
 	}
 
 	std::string STAT_Dialogues()
