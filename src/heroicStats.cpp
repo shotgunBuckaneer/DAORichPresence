@@ -114,32 +114,37 @@ namespace
 
 	std::string STAT_Kills()
 	{
-		Stat_ImageKey = "ach_feat_grey_warden";
+		STAT_ImageKey = "ach_feat_grey_warden";
 		return "Kills: " + dao::Utf8(GetHeroicStatValue(hero_stat::KILLS));
 	}
 
 	std::string STAT_TotalDamageDealt()
 	{
+		STAT_ImageKey = "ach_feat_heavy_hitter";
 		return "Damage dealt: " + dao::Utf8(GetHeroicStatValue(hero_stat::TOTAL_DAMAGE_DEALT));
 	}
 
 	std::string STAT_FriendlyFireDealt()
 	{
+		STAT_ImageKey = "ach_abi_elementalist";
 		return "Friendly-fire damage dealt: " + dao::Utf8(GetHeroicStatValue(hero_stat::FRIENDLY_FIRE_DEALT));
 	}
 
 	std::string STAT_HighestDamageDealt()
 	{
+		STAT_ImageKey = "ach_feat_heavy_hitter";
 		return "Greatest damage dealt: " + dao::Utf8(GetHeroicStatValue(hero_stat::HIGHEST_DAMAGE_DEALT));
 	}
 
 	std::string STAT_TotalDamagePercent()
 	{
+		STAT_ImageKey = "ach_feat_heavy_hitter";
 		return "Contribution to party damage: " + dao::Utf8(GetHeroicStatValue(hero_stat::TOTAL_DAMAGE_PERCENT)) + "%";
 	}
 
 	std::string STAT_HitRate()
 	{
+		STAT_ImageKey = "ach_feat_heavy_hitter";
 		return "Hit rate: " + dao::Utf8(GetHeroicStatValue(hero_stat::HIT_RATE)) + "%";
 	}
 
@@ -148,21 +153,26 @@ namespace
 		auto oHero = dao::script::api::GetHero();
 		auto fResult = dao::script::api::GetCreatureProperty(oHero, hero_stat::MOST_POWERFUL_SLAIN);
 		auto sResult = dao::tlk::String(dao::script::api::FloatToInt(fResult));
+		
+		STAT_ImageKey = "ach_feat_master_warden";
 		return "Most powerful foe slain: " + dao::Utf8(sResult);
 	}
 
 	std::string STAT_Injuries()
 	{
+		STAT_ImageKey = "ach_feat_a_big_deal";
 		return "Injuries: " + dao::Utf8(GetHeroicStatValue(hero_stat::INJURIES));
 	}
 
 	std::string STAT_PartyKills()
 	{
+		STAT_ImageKey = "ach_feat_blight_queller";
 		return "Party kills: " + dao::Utf8(GetHeroicStatValue(hero_stat::PARTY_KILLS));
 	}
 
 	std::string STAT_PartyDamageDealt()
 	{
+		STAT_ImageKey = "ach_feat_heavy_hitter";
 		return "Damage dealt by party: " + dao::Utf8(GetHeroicStatValue(hero_stat::PARTY_DAMAGE_DEALT));
 	}
 
@@ -171,16 +181,20 @@ namespace
 		auto oHero = dao::script::api::GetHero();
 		auto fResult = dao::script::api::GetCreatureProperty(oHero, hero_stat::MOST_POWERFUL_SLAIN_BY_PARTY);
 		auto sResult = dao::tlk::String(dao::script::api::FloatToInt(fResult));
+
+		STAT_ImageKey = "ach_feat_tactician";
 		return "Most powerful foe slain by party: " + dao::Utf8(sResult);
 	}
 
 	std::string STAT_GrouptypeDemons()
 	{
+		STAT_ImageKey = "rage_demon";
 		return "Demons and undead killed: " + dao::Utf8(GetHeroicStatValue(hero_stat::GROUPTYPE_DEMONS));
 	}
 
 	std::string STAT_GrouptypeFantastical()
 	{
+		STAT_ImageKey = "ach_decisive_slayer";
 		return "Fantastic creatures killed: " + dao::Utf8(GetHeroicStatValue(hero_stat::GROUPTYPE_FANTASTICAL));
 	}
 
