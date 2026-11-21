@@ -200,36 +200,43 @@ namespace
 
 	std::string STAT_GrouptypeConstruct()
 	{
+		STAT_ImageKey = "ach_prc_rockhardplace";
 		return "Golems killed: " + dao::Utf8(GetHeroicStatValue(hero_stat::GROUPTYPE_CONSTRUCT));
 	}
 
 	std::string STAT_GrouptypeHumanoids()
 	{
+		STAT_ImageKey = "ach_stats_the_punisher";
 		return "People killed: " + dao::Utf8(GetHeroicStatValue(hero_stat::GROUPTYPE_HUMANOIDS));
 	}
 
 	std::string STAT_GrouptypeDarkspawn()
 	{
+		STAT_ImageKey = "ach_feat_blight_queller";
 		return "Darkspawn killed: " + dao::Utf8(GetHeroicStatValue(hero_stat::GROUPTYPE_DARKSPAWNS));
 	}
 
 	std::string STAT_GrouptypeArchEnemies()
 	{
+		STAT_ImageKey = "ach_destroyedworld";
 		return "Bosses killed: " + dao::Utf8(GetHeroicStatValue(hero_stat::GROUPTYPE_ARCH_ENEMIES));
 	}
 
 	std::string STAT_GrouptypeDraconics()
 	{
+		STAT_ImageKey = "ach_feat_dragonslayer";
 		return "Dragonkin killed: " + dao::Utf8(GetHeroicStatValue(hero_stat::GROUPTYPE_DRACONICS));
 	}
 
 	std::string STAT_GrouptypeCorruptedAnimals()
 	{
+		STAT_ImageKey = "cg_ico_race_corrupt";
 		return "Corrupted animals killed: " + dao::Utf8(GetHeroicStatValue(hero_stat::GROUPTYPE_CORRUPTED_ANIMALS));
 	}
 
 	std::string STAT_GrouptypeVermin()
 	{
+		STAT_ImageKey = "portrait_37";
 		return "Vermin killed: " + dao::Utf8(GetHeroicStatValue(hero_stat::GROUPTYPE_VERMIN));
 	}
 
