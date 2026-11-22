@@ -242,21 +242,25 @@ namespace
 
 	std::string STAT_GrouptypeAnimals()
 	{
+		STAT_ImageKey = "portrait_49";
 		return "Dangerous animals killed: " + dao::Utf8(GetHeroicStatValue(hero_stat::GROUPTYPE_ANIMALS));
 	}
 
 	std::string STAT_StealingSuccess()
 	{
+		STAT_ImageKey = "ach_stats_mugger";
 		return "Stealing successes: " + dao::Utf8(GetHeroicStatValue(hero_stat::STEALING_SUCCESS));
 	}
 
 	std::string STAT_StealingFailure()
 	{
+		STAT_ImageKey = "ach_abi_accomplish_rog";
 		return "Stealing failures: " + dao::Utf8(GetHeroicStatValue(hero_stat::STEALING_FAILURE));
 	}
 
 	std::string STAT_MostMoneyEver()
 	{
+		STAT_ImageKey = "ico_goldsack";
 		auto oHero = dao::script::api::GetHero();
 		auto fResult = dao::script::api::GetCreatureProperty(oHero, hero_stat::MOST_MONEY_EVER);
 
@@ -265,6 +269,7 @@ namespace
 
 	std::string STAT_MoneySpent()
 	{
+		STAT_ImageKey = "ico_goldsack";
 		auto oHero = dao::script::api::GetHero();
 		auto fResult = dao::script::api::GetCreatureProperty(oHero, hero_stat::MONEY_SPENT);
 		
@@ -273,11 +278,13 @@ namespace
 
 	std::string STAT_Dialogues()
 	{
+		STAT_ImageKey = "ach_stats_persuasive";
 		return "Conversations initiated: " + dao::Utf8(GetHeroicStatValue(hero_stat::DIALOGUES));
 	}
 
 	std::string STAT_CodexEntries()
 	{
+		STAT_ImageKey = "ach_research_collected";
 		return "Codex entries discovered: " + dao::Utf8(GetHeroicStatValue(hero_stat::CODEX_ENTRIES));
 	}
 
@@ -289,11 +296,13 @@ namespace
 
 	std::string STAT_AreasExplored()
 	{
+		STAT_ImageKey = "ach_feat_traveler";
 		return "World explored: " + dao::Utf8(GetHeroicStatValue(hero_stat::AREAS_EXPLORED)) + "%";
 	}
 
 	std::string STAT_TotalTimePlayed()
 	{
+		STAT_ImageKey = "redcliffe_concept";
 		auto oHero = dao::script::api::GetHero();
 		auto fResult = dao::script::api::GetCreatureProperty(oHero, hero_stat::TOTAL_TIME_PLAYED);
 
@@ -308,6 +317,7 @@ namespace
 
 	std::string STAT_ItemsCrafted()
 	{
+		STAT_ImageKey = "ach_stats_tinkerer";
 		return "Items crafted: " + dao::Utf8(GetHeroicStatValue(hero_stat::ITEMS_CRAFTED));
 	}
 
