@@ -10,8 +10,10 @@ set(DISCORD_RPC_ROOT
     "${CMAKE_CURRENT_SOURCE_DIR}/extern/discord-rpc/win32-dynamic"
 )
 
+# Discord's library
 add_library(discord_rpc SHARED IMPORTED GLOBAL)
 
+# Discord lib config
 set_target_properties(discord_rpc PROPERTIES
     IMPORTED_LOCATION
         "${DISCORD_RPC_ROOT}/bin/discord-rpc.dll"
@@ -23,10 +25,18 @@ set_target_properties(discord_rpc PROPERTIES
         "${DISCORD_RPC_ROOT}/include"
 )
 
+# Versioning configuration
+configure_file(
+    "${CMAKE_CURRENT_SOURCE_DIR}/resources/version.rc.in"
+    "${CMAKE_CURRENT_BINARY_DIR}/version.rc"
+    @ONLY
+)
+
 # The actual plugin to be built
 add_daolib_plugin(richpresence SOURCES 
 	src/richpresence.cpp
 	src/heroicStats.cpp
+	"${CMAKE_CURRENT_BINARY_DIR}/version.rc"
 	)
 
 #Link 'em

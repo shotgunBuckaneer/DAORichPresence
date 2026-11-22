@@ -1,0 +1,24 @@
+1 VERSIONINFO
+FILEVERSION @PROJECT_VERSION_MAJOR@,@PROJECT_VERSION_MINOR@,@PROJECT_VERSION_PATCH@,0
+PRODUCTVERSION @PROJECT_VERSION_MAJOR@,@PROJECT_VERSION_MINOR@,@PROJECT_VERSION_PATCH@,0
+FILETYPE VFT_DLL
+BEGIN
+    BLOCK "StringFileInfo"
+    BEGIN
+        BLOCK "040904B0"
+        BEGIN
+            VALUE "CompanyName", "Patrick 'hermaen2000' Schulz"
+            VALUE "FileDescription", "Dragon Age: Origins Rich Presence Plugin"
+            VALUE "FileVersion", "@PROJECT_VERSION@.0"
+            VALUE "ProductName", "DAORichPresence"
+            VALUE "ProductVersion", "@PROJECT_VERSION@.0"
+            VALUE "OriginalFilename", "richpresence.dll"
+            VALUE "InternalName", "richpresence"
+            VALUE "LegalCopyright", "Copyright © 2026"
+        END
+    END
+    BLOCK "VarFileInfo"
+    BEGIN
+        VALUE "Translation", 0x0409, 1200
+    END
+END
