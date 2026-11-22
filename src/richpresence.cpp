@@ -335,6 +335,11 @@ extern "C" __declspec(dllexport) bool __cdecl DAOLib_Load(const dao::LoaderInfo 
         spdlog::error("Mismatch between plugin build, loader and/or game");
         return false; // not the loader or the game this was built for
     }
+
+#ifdef _DEBUG
+    spdlog::set_level(spdlog::level::debug);
+#endif // _DEBUG
+
         
         
     dao::OpenLog("richpresence"); // Documents\BioWare\Dragon Age\daolib\richpresence.log
