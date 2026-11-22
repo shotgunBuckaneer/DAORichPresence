@@ -336,9 +336,9 @@ extern "C" __declspec(dllexport) bool __cdecl DAOLib_Load(const dao::LoaderInfo 
         return false; // not the loader or the game this was built for
     }
 
-#ifdef _DEBUG
-    spdlog::set_level(spdlog::level::debug);
-#endif // _DEBUG
+    #ifdef _DEBUG
+        spdlog::set_level(spdlog::level::debug);
+    #endif // _DEBUG
 
         
         
