@@ -39,6 +39,23 @@ constexpr int GUI_ITEM_UPGRADE = 37;
 constexpr int GUI_CRAFTING = 38;
 constexpr int GUI_SLIDESHOW = 48;
 
+/*
+* Shelved. See ANNOTATION1 below.
+//terrains
+namespace terrain
+{
+    constexpr int INVALID = 0;
+    constexpr int Mountains = 1;
+    constexpr int Forest = 2;
+    constexpr int Underground = 3;
+    constexpr int Plains = 4;
+    constexpr int Highway = 5;
+    constexpr int DenerimClimaxNormal = 6;
+    constexpr int DenerimClimaxPalace = 7;
+    constexpr int Denerim = 8;
+}
+*/
+
 //strings as global variable for transport from dllexport to GameMode switch
 std::string DialogueInitiator{};
 std::string LevelUpTargetName{};
@@ -155,7 +172,7 @@ namespace
 
 }
 
-// Identify area in NWScript
+// Identify current area in NWScript
 std::string AreaName()
 {
     auto oHero      = dao::script::api::GetHero();
@@ -163,6 +180,43 @@ std::string AreaName()
     auto sName      = dao::script::api::GetName(oArea);
     return dao::Utf8(sName);
 }
+
+/* 
+* Shelved. See ANNOTATION1 below.
+// returns Terrain-based string for Worldmap travel information
+std::string TerrainAttachment(int nTargetTerrain)
+{
+    switch (nTargetTerrain)
+    {
+    case terrain::Mountains:
+        return ", traversing the mountains";
+
+    case terrain::Forest:
+        return ", going through the thick forest";
+
+    case terrain::Underground:
+        return ", braving the Deep Roads";
+
+    case terrain::Plains:
+        return ", crossing over the plains";
+
+    case terrain::Highway:
+        return ", using the Imperial Highway";
+
+    case terrain::DenerimClimaxNormal:
+        return ", fighting through the streets of Denerim";
+
+    case terrain::DenerimClimaxPalace:
+        return ", the fighting is getting more intense";
+
+    case terrain::Denerim:
+        return ", winding through the many alleys of Denerim";
+
+    default:
+        return {};
+    }
+}
+*/
 
 //identifying only relevant GUI types as defined in NWScript's script.ldf
 std::string guiType()
@@ -361,6 +415,7 @@ extern "C" __declspec(dllexport) bool __cdecl DAOLib_Load(const dao::LoaderInfo 
     static std::string sHeroicStat{};
     static std::string sGameMode{};
     static std::string sGuiMode{};
+    //static std::string sAreaName{};
 
     //Initializing first status message
     presence.state = "Starting the game...";
@@ -437,6 +492,57 @@ extern "C" __declspec(dllexport) bool __cdecl DAOLib_Load(const dao::LoaderInfo 
                                     }
                                                                         
                               });
+
+    /*
+    * ANNOTATION1:
+    * Shelving this for now. The Destination is, regardless of approach, not accessible as it is not 
+    * loaded yet.
+
+    //Capturing World Map transitions for display on state.
+    dao::events::OnScriptEvent(dao::script::EventType::BeginTravel,
+                              [](dao::ObjectId, const dao::CScriptEvent &event)
+                              {
+                                    auto sSourceTag = event.String(0);
+                                    auto sAreaTag   = event.String(1);
+
+                                    spdlog::info("BeginTravel: {} -> {}",
+                                    dao::Utf8(sSourceTag), dao::Utf8(sAreaTag));
+
+                                    //Sanity check: are we trying to travel to where we already are?
+                                    if (sSourceTag != sAreaTag)
+                                    {
+                                        auto oArea = dao::script::api::GetObjectByTag(sAreaTag);
+
+                                        spdlog::info("Destination object valid: {}",
+                                        dao::script::api::IsObjectValid(oArea));
+
+                                        //Sanity check: Does the destination actually exist?
+                                        if (dao::script::api::IsObjectValid(oArea))
+                                        {
+                                            sAreaName = "Travelling to " + dao::Utf8(dao::script::api::GetName(oArea)) + TerrainAttachment(event.Integer(1)) + "...";
+
+                                            spdlog::info("Prepared travel string: {}", sAreaName);
+                                        }
+
+                                    }
+
+                              });
+    //split the actual string execution and passing off the buck off to RetainedGM on the Worldmap Pretransition
+    //event due to timing concerns.
+    //In testing, just using RetainedGM didn't work, so we'll try updating the state from right in here,
+    //instead.
+    dao::events::OnScriptEvent(dao::script::EventType::WorldmapPretransition,
+                              [](dao::ObjectId, const dao::CScriptEvent&){
+                                    RetainedGM = sAreaName;
+                                    presence.state = RetainedGM.c_str();
+                                    Discord_UpdatePresence(&presence);
+
+                                    spdlog::info("Pretransition received. Stored area name: '{}'", sAreaName);
+
+                                    spdlog::debug("Travel: {}", sAreaName);
+                              });
+
+*/
 
     //register and log game mode change
     dao::events::OnScriptEvent(dao::script::EventType::GamemodeChange,
