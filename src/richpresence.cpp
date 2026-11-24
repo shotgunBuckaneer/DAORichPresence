@@ -5,6 +5,7 @@ modes.*/
 #include <string>
 #include <algorithm>
 #include <array>
+#include <filesystem>
 
 #include "dao/Log.h"
 #include "dao/Plugin.h"
@@ -384,19 +385,28 @@ std::string GameModeName(dao::GameMode mode)
 extern "C" __declspec(dllexport) bool __cdecl DAOLib_Load(const dao::LoaderInfo *info)
 {
     //plugin initialization
+    dao::OpenLog("richpresence"); // Documents\BioWare\Dragon Age\daolib\richpresence.log
+
+    #ifdef _DEBUG
+        spdlog::set_level(spdlog::level::debug);
+    #endif // _DEBUG
+
     if (info == nullptr || info->apiVersion != dao::kPluginApiVersion || !info->knownExecutable)
     {
         spdlog::error("Mismatch between plugin build, loader and/or game");
         return false; // not the loader or the game this was built for
     }
 
-    #ifdef _DEBUG
-        spdlog::set_level(spdlog::level::debug);
-    #endif // _DEBUG
+    if (std::filesystem::exists("./discord-rpc.dll"))
+    {
+        spdlog::info("discord-rpc.dll confirmed found.");
+    }
+    else
+    {
+        spdlog::error("discord-rpc.dll not found in <install path>\\Dragon Age\\bin_ship, richpresence plugin aborting.");
+        return false;
+    }
 
-        
-        
-    dao::OpenLog("richpresence"); // Documents\BioWare\Dragon Age\daolib\richpresence.log
     spdlog::info("Plugin loaded successfully");
 
     //Handlers aren't really needed at this point but the Initialization requires them as an argument

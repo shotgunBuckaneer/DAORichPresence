@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.21)
 
-project(DAORichPresence VERSION 0.9.0 LANGUAGES CXX)
+project(DAORichPresence VERSION 0.9.1 LANGUAGES CXX)
 
 # access DAOLib but don't include it
 add_subdirectory(extern/DAOLib EXCLUDE_FROM_ALL)
@@ -39,8 +39,16 @@ add_daolib_plugin(richpresence SOURCES
 	"${CMAKE_CURRENT_BINARY_DIR}/version.rc"
 	)
 
-#Link 'em
+# Link 'em
 target_link_libraries(richpresence PRIVATE discord_rpc)
+
+# Ensure we can check for Discord RPC presence BEFORE trying to load it 
+target_link_options(richpresence PRIVATE 
+					"/DELAYLOAD:discord-rpc.dll"
+)
+
+# Link delay loader helper
+target_link_libraries(richpresence PRIVATE delayimp)
 
 # Place Discord RPC DLL besides DAOrigins.exe in the build output.
 add_custom_target(discord_rpc_runtime ALL
