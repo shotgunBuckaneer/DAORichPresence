@@ -102,6 +102,26 @@ std::string PCName()
     return dao::Utf8(sPCName);
 }
 
+// For reduction of Jadens in known standalone modules that skip Chargen.
+std::string AntiJadenPanicButton()
+{
+    auto sModuleName = dao::script::api::GetName(dao::script::api::GetModule());
+    
+    if (sModuleName == L"DAO_PRC_DRK") //Darkspawn Chronicles
+    {
+        return dao::Utf8(dao::tlk::String(449250)); //Hurlock Vanguard
+    }
+
+    
+    if (sModuleName == L"DAO_PRC_LEL") //Leliana's Song
+    {
+        return dao::Utf8(dao::tlk::String(448664)); //Leliana
+    }
+
+    //if this still doesn't work, we might just be dealing with an actual Jaden or an unknown module
+    return {};
+}
+
 // Identify PC class via NWScript, return class string
 std::string PCClass()
 {
@@ -136,6 +156,9 @@ std::string PCLevel()
 
 namespace
 {
+
+    bool bNamePending{ false };
+
     // Action for both kinds of PC detection on AreaLoad events
     void PCAction(DiscordRichPresence& presence, std::string& sName, std::string& sClassAndLevel, std::string& sHeroicStat)
     {
@@ -146,6 +169,9 @@ namespace
 
         spdlog::debug("Hero: {}, Class: {}, Level {}", sPCName, sPCClass, sPCLevel);
         spdlog::debug("Area change registered");
+
+        //Check if PC Name is the default
+        bNamePending = (sPCName == dao::Utf8(dao::tlk::String(215786)) + " ");//<FirstName/> + blank <LastName/> if we got the default name
 
         sName = sPCName;
         sClassAndLevel = sPCClass + ", Level " + sPCLevel;
@@ -171,7 +197,7 @@ namespace
         Discord_UpdatePresence(&presence);
     }
 
-}
+} //end of unnamed namespace
 
 // Identify current area in NWScript
 std::string AreaName()
@@ -564,6 +590,25 @@ extern "C" __declspec(dllexport) bool __cdecl DAOLib_Load(const dao::LoaderInfo 
                                        const auto newMode = static_cast<dao::GameMode>(event.Integer(0));
                                        sGameMode = GameModeName(newMode);
                                        presence.state = sGameMode.c_str();
+                                       // extra check to avoid default name, if possible; name
+                                       // pending flag, plus Explore or Combat GM only
+                                       if (bNamePending && (newMode == dao::GameMode::Explore || newMode == dao::GameMode::Combat))
+                                       {
+                                           sName = PCName();
+                                           // double-check whether the name STILL is identical to default
+                                           if (sName == dao::Utf8(dao::tlk::String(215786)) + " ") //<FirstName/> + blank <LastName/> if we got the default name)
+                                           {
+                                               sName = AntiJadenPanicButton();
+                                               // if this ended up emptying our string, let's
+                                               // leave things as they were, otherwise, go wild
+                                               if (!sName.empty())
+                                               {
+                                                   presence.details = sName.c_str();
+                                               }
+                                               
+                                           }
+
+                                       }
                                        Discord_UpdatePresence(&presence);
 
                                        spdlog::debug("Game mode changed: {}", sGameMode);
